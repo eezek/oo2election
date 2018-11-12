@@ -2,6 +2,7 @@ package br.edu.ulbra.election.election.input.v1;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.Length;
 
 @ApiModel(description = "Election Input Information")
 public class ElectionInput {
@@ -11,6 +12,7 @@ public class ElectionInput {
     @ApiModelProperty(example = "RS", notes = "State Code")
     private String stateCode;
     @ApiModelProperty(example = "Senator", notes = "Election Description")
+    @Length(min = 5, max = 255)
     private String description;
 
     public Integer getYear() {

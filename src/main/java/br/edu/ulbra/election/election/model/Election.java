@@ -22,8 +22,7 @@ public class Election {
     @Column(nullable = false)
     private String description;
 
-    @OneToMany(targetEntity = ElectionVoter.class)
-    @JoinColumn(name = "election_id")
-    private Set<ElectionVoter> voters;
+    @OneToMany(mappedBy = "election")
+    private Set<Vote> voters;
 
 }

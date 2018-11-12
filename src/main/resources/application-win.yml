@@ -1,6 +1,8 @@
 server:
   port: 8084
 
+
+
 spring:
   datasource:
     url: jdbc:h2:mem:testdb
@@ -33,3 +35,12 @@ info:
     name: Election
     creator-name: Tales Bitelo Viegas
     creator-email: tales.viegas@ulbra.br
+
+
+logging:
+  level:
+    org:
+      hibernate:
+        type: trace
+        persister:
+          entity: DEBUG

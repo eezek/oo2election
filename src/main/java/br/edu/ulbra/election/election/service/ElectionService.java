@@ -28,7 +28,7 @@ public class ElectionService {
     private static final String MESSAGE_STATE = "Invalid state input";
     private static final String MESSAGE_YEAR = "Invalid year input";
     private static final String MESSAGE_INVALID_DESC = "Invalid description input";
-    private static final String MESSAGE_NOT_FOUND = "Not found";
+    private static final String MESSAGE_NOT_FOUND = "Election not found";
 
     public List<ElectionOutput> getAll() {
         Type electionOutputListType = new TypeToken<List<ElectionOutput>>() {

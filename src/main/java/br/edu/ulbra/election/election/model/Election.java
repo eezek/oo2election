@@ -3,6 +3,7 @@ package br.edu.ulbra.election.election.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @Entity
@@ -20,5 +21,9 @@ public class Election {
 
     @Column(nullable = false)
     private String description;
+
+    @OneToMany(targetEntity = ElectionVoter.class)
+    @JoinColumn(name = "election_id")
+    private Set<ElectionVoter> voters;
 
 }

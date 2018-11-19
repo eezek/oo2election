@@ -47,3 +47,4 @@ logging:
 
 url:
   candidate-service: 'http://localhost:8082'
+  voter-service: 'http://localhost:8081'

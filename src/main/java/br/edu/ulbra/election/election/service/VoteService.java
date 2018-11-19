@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -23,6 +24,8 @@ public class VoteService {
     private ElectionRepository electionRepository;
 
     private CandidateService candidateService;
+
+    private VoterService voterService;
 
     public GenericOutput createVote(VoteInput voteInput) {
 
@@ -60,6 +63,7 @@ public class VoteService {
             throw new EntityNotFoundException("Invalid Voter");
         }
         // TODO: Validate voter
+        isValidVoter(voteInput.getVoterId());
         return electionRepository.findById(voteInput.getElectionId()).orElseThrow(EntityNotFoundException::new);
     }
 
@@ -89,6 +93,16 @@ public class VoteService {
         if(!votes.isEmpty())
             return new GenericOutput("response: true");
         return new GenericOutput("response: false");
+    }
+
+    private void isValidVoter(Long voterId){
+        try {
+            Optional.ofNullable(voterService.getById(voterId)).orElseThrow(()-> new EntityNotFoundException("Voter not found"));
+        }catch (FeignException e){
+            if (e.status() == 500) {
+                throw new EntityNotFoundException("Invalid Voter");
+            }
+        }
     }
 
 }

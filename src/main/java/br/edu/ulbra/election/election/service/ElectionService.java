@@ -3,10 +3,13 @@ package br.edu.ulbra.election.election.service;
 import br.edu.ulbra.election.election.common.StatesEnum;
 import br.edu.ulbra.election.election.input.v1.ElectionInput;
 import br.edu.ulbra.election.election.model.Election;
+import br.edu.ulbra.election.election.output.v1.CandidateOutput;
 import br.edu.ulbra.election.election.output.v1.ElectionOutput;
 import br.edu.ulbra.election.election.output.v1.GenericOutput;
 import br.edu.ulbra.election.election.repository.ElectionRepository;
+import br.edu.ulbra.election.election.repository.VoteRepository;
 import com.google.common.base.Enums;
+import feign.FeignException;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -15,12 +18,17 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class ElectionService {
 
     private ElectionRepository electionRepository;
+
+    private VoteRepository voteRepository;
+
+    private CandidateService candidateService;
 
     private ModelMapper modelMapper;
 
@@ -55,6 +63,7 @@ public class ElectionService {
 
     public ElectionOutput update(Long electionId, ElectionInput electionInput) {
         isValidInput(electionInput);
+        verifyElection(electionId);
         Election election = byId(electionId);
 
         election.setStateCode(electionInput.getStateCode());
@@ -65,7 +74,7 @@ public class ElectionService {
     }
 
     public GenericOutput delete(Long electionId) {
-
+        verifyElection(electionId);
         electionRepository.delete(byId(electionId));
 
         return new GenericOutput("Election deleted");
@@ -74,6 +83,25 @@ public class ElectionService {
 
     private Election byId(Long electionId) {
         return electionRepository.findById(electionId).orElseThrow(() -> new EntityNotFoundException(MESSAGE_NOT_FOUND));
+    }
+
+    private void verifyElection(Long electionId){
+        Optional.ofNullable(voteRepository.findByElectionId(electionId)).ifPresent(x -> {
+            if (!x.isEmpty()){
+            throw new EntityNotFoundException("Election cannot be touched");}
+        });
+
+        try {
+            CandidateOutput candidateOutput = candidateService.getByElectionId(electionId);
+            if (candidateOutput != null) {
+                throw new EntityNotFoundException("Election already have candidates");
+            }
+        } catch (FeignException e) {
+            if (e.status() == 500) {
+                throw new EntityNotFoundException("Invalid Election");
+            }
+        }
+
     }
 
     private void isValidInput(ElectionInput election) {

@@ -44,3 +44,6 @@ logging:
         type: trace
         persister:
           entity: DEBUG
+
+url:
+  candidate-service: 'http://localhost:8082'

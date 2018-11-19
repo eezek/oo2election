@@ -1,13 +1,11 @@
 package br.edu.ulbra.election.election.api.v1;
 
 import br.edu.ulbra.election.election.input.v1.VoteInput;
+import br.edu.ulbra.election.election.model.Vote;
 import br.edu.ulbra.election.election.output.v1.GenericOutput;
 import br.edu.ulbra.election.election.service.VoteService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,5 +24,15 @@ public class VoteApi {
     @PutMapping("/multiple")
     public GenericOutput multipleElectionVote(@RequestBody List<VoteInput> voteInputList) {
         return voteService.createMultipleVote(voteInputList);
+    }
+
+    @GetMapping("/candidate/{candidateId}/election/{electionId}")
+    public List<Vote> byElectionAndCandidate(@PathVariable Long candidateId, @PathVariable Long electionId){
+        return voteService.byElectionAndCandidate(candidateId, electionId);
+    }
+
+    @GetMapping("/candidate/{candidateId}")
+    public List<Vote> byCandidate(@PathVariable Long candidateId){
+        return voteService.byCandidate(candidateId);
     }
 }

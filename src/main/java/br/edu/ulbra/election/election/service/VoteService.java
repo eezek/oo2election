@@ -1,13 +1,15 @@
 package br.edu.ulbra.election.election.service;
 
 import br.edu.ulbra.election.election.input.v1.VoteInput;
+import br.edu.ulbra.election.election.model.Election;
 import br.edu.ulbra.election.election.model.Vote;
 import br.edu.ulbra.election.election.output.v1.GenericOutput;
+import br.edu.ulbra.election.election.repository.ElectionRepository;
 import br.edu.ulbra.election.election.repository.VoteRepository;
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
@@ -16,24 +18,40 @@ public class VoteService {
 
     private VoteRepository voteRepository;
 
-    private ElectionService electionService;
-
-    private ModelMapper modelMapper;
+    private ElectionRepository electionRepository;
 
     public GenericOutput createVote(VoteInput voteInput) {
-        electionService.getById(voteInput.getElectionId());
-        Vote vote = modelMapper.map(voteInput, Vote.class);
-        this.create(vote);
+
+        Vote vote = new Vote();
+        vote.setElection(validateInput(voteInput));
+        vote.setVoterId(voteInput.getVoterId());
+
+        if (voteInput.getCandidateNumber() == null) {
+            vote.setBlankVote(true);
+        } else {
+            vote.setBlankVote(false);
+        }
+
+        // TODO: Validate null candidate
+        vote.setNullVote(false);
+
+        voteRepository.save(vote);
+
         return new GenericOutput("You have voted");
     }
 
     public GenericOutput createMultipleVote(List<VoteInput> votes) {
-        votes.forEach(voteInput -> create(modelMapper.map(voteInput, Vote.class)));
+        votes.forEach(voteInput -> createVote(voteInput));
         return new GenericOutput("You have voted");
     }
 
-    private void create(Vote vote) {
-        voteRepository.save(vote);
+    public Election validateInput(VoteInput voteInput) {
+
+        if (voteInput.getVoterId() == null) {
+            throw new EntityNotFoundException("Invalid Voter");
+        }
+        // TODO: Validate voter
+        return electionRepository.findById(voteInput.getElectionId()).orElseThrow(EntityNotFoundException::new);
     }
 
 }

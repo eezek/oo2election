@@ -22,7 +22,7 @@ public class Election {
     @Column(nullable = false)
     private String description;
 
-    @OneToMany(mappedBy = "election")
+    @OneToMany(mappedBy = "election", fetch = FetchType.LAZY)
     private Set<Vote> voters;
 
 }

@@ -7,6 +7,7 @@ import br.edu.ulbra.election.election.output.v1.CandidateOutput;
 import br.edu.ulbra.election.election.output.v1.GenericOutput;
 import br.edu.ulbra.election.election.repository.ElectionRepository;
 import br.edu.ulbra.election.election.repository.VoteRepository;
+import feign.FeignException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +36,13 @@ public class VoteService {
             vote.setBlankVote(false);
         }
 
-        // TODO: Validate null candidate
-        vote.setNullVote(false);
+        CandidateOutput candidateOutput = isCandidate(voteInput.getCandidateNumber());
+        if (candidateOutput != null){
+            vote.setCandidateId(candidateOutput.getId());
+            vote.setNullVote(false);
+        }else {
+            vote.setNullVote(true);
+        }
 
         voteRepository.save(vote);
 
@@ -65,8 +71,24 @@ public class VoteService {
         return voteRepository.findByCandidateId(candidateId);
     }
 
-    private CandidateOutput visCandidate(Long candiadteNumber){
-        return candidateService.getByNumber(candiadteNumber);
+    private CandidateOutput isCandidate(Long candiadteNumber){
+        CandidateOutput candidateOutput = new CandidateOutput();
+        try{
+            candidateOutput = candidateService.getByNumber(candiadteNumber);
+        }catch (FeignException e){
+            if (e.status() == 500) {
+                throw new EntityNotFoundException("Invalid Candidate");
+            }
+        }
+        return candidateOutput;
+    }
+
+    public GenericOutput hasVotes(Long voterId)
+    {
+        List<Vote> votes = voteRepository.getByVoterId(voterId);
+        if(!votes.isEmpty())
+            return new GenericOutput("response: true");
+        return new GenericOutput("response: false");
     }
 
 }

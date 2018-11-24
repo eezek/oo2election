@@ -21,6 +21,8 @@ public class CandidateService {
         return this.candidateClient.getByNumber(number);
     }
 
+    public CandidateOutput getById (Long id) {return this.candidateClient.getById(id); }
+
     @FeignClient(value = "candidate-service", url = "${url.candidate-service}")
     private interface CandidateClient {
 
@@ -29,5 +31,8 @@ public class CandidateService {
 
         @GetMapping("/v1/candidate/number/{candidateNum}")
         CandidateOutput getByNumber(@PathVariable(name = "candidateNum") Long candidateNum);
+
+        @GetMapping("/v1/candidate/{candidateId}")
+        CandidateOutput getById(@PathVariable(name = "candidateId") Long candidateId);
     }
 }

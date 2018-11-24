@@ -13,7 +13,7 @@ public interface VoteRepository extends CrudRepository<Vote, Long> {
 
     List<Vote> findByElectionId(Long electionId);
 
-    List<Vote> findByCandidateId(Long electionId);
+    List<Vote> findByCandidateId(Long candidateId);
 
     List<Vote> findByElectionIdAndCandidateId(Long electionId, Long candidateId);
 

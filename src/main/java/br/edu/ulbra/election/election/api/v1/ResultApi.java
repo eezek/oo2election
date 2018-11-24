@@ -3,6 +3,7 @@ package br.edu.ulbra.election.election.api.v1;
 import br.edu.ulbra.election.election.output.v1.ElectionCandidateResultOutput;
 import br.edu.ulbra.election.election.output.v1.GenericOutput;
 import br.edu.ulbra.election.election.output.v1.ResultOutput;
+import br.edu.ulbra.election.election.service.ResultService;
 import br.edu.ulbra.election.election.service.VoteService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ResultApi {
 
     private VoteService voteService;
+    private ResultService resultService;
 
     @GetMapping("/election/{electionId}")
     public ResultOutput getResultByElection(@PathVariable Long electionId) {
@@ -24,7 +26,7 @@ public class ResultApi {
 
     @GetMapping("/candidate/{candidateId}")
     public ElectionCandidateResultOutput getResultByCandidate(@PathVariable Long candidateId) {
-        return new ElectionCandidateResultOutput();
+        return resultService.getResultByCandidate(candidateId);
     }
 
     @GetMapping("/voter/{voterId}")

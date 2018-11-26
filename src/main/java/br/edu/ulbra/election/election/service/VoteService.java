@@ -73,7 +73,6 @@ public class VoteService {
             throw new GenericOutputException("ElectionId Cannot be Null");
         }
 
-        // TODO: Validate voter
         isValidVoter(voteInput.getVoterId());
         return electionRepository.findById(voteInput.getElectionId()).orElseThrow(EntityNotFoundException::new);
     }
@@ -86,10 +85,10 @@ public class VoteService {
         return voteRepository.findByCandidateId(candidateId);
     }
 
-    private CandidateOutput isCandidate(Long candiadteNumber){
+    private CandidateOutput isCandidate(Long candidateNumber){
         CandidateOutput candidateOutput = new CandidateOutput();
         try{
-            candidateOutput = candidateService.getByNumber(candiadteNumber);
+            candidateOutput = candidateService.getByNumber(candidateNumber);
         }catch (FeignException e){
             if (e.status() == 500) {
                 throw new EntityNotFoundException("Invalid Candidate");

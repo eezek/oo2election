@@ -1,11 +1,13 @@
 package br.edu.ulbra.election.election.service;
 
+import br.edu.ulbra.election.election.exception.GenericOutputException;
 import br.edu.ulbra.election.election.input.v1.VoteInput;
 import br.edu.ulbra.election.election.model.Election;
 import br.edu.ulbra.election.election.model.Vote;
 import br.edu.ulbra.election.election.output.v1.CandidateOutput;
 import br.edu.ulbra.election.election.output.v1.GenericOutput;
 import br.edu.ulbra.election.election.repository.ElectionRepository;
+import br.edu.ulbra.election.election.repository.VoteProjection;
 import br.edu.ulbra.election.election.repository.VoteRepository;
 import feign.FeignException;
 import lombok.AllArgsConstructor;
@@ -60,18 +62,23 @@ public class VoteService {
     public Election validateInput(VoteInput voteInput) {
 
         if (voteInput.getVoterId() == null) {
-            throw new EntityNotFoundException("Invalid Voter");
+            throw new GenericOutputException("VoterId Cannot be Null");
         }
+
+        if (voteInput.getElectionId() == null){
+            throw new GenericOutputException("ElectionId Cannot be Null");
+        }
+
         // TODO: Validate voter
         isValidVoter(voteInput.getVoterId());
         return electionRepository.findById(voteInput.getElectionId()).orElseThrow(EntityNotFoundException::new);
     }
 
-    public List<Vote> byElectionAndCandidate(Long candidateId, Long electionId) {
+    public List<VoteProjection> byElectionAndCandidate(Long candidateId, Long electionId) {
         return voteRepository.findByElectionIdAndCandidateId(electionId, candidateId);
     }
 
-    public List<Vote> byCandidate(Long candidateId) {
+    public List<VoteProjection> byCandidate(Long candidateId) {
         return voteRepository.findByCandidateId(candidateId);
     }
 

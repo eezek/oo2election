@@ -24,6 +24,9 @@ public class Vote implements Serializable {
     @Column(nullable = true)
     private Long candidateId;
 
+    @Column(name = "election_id", insertable = false, updatable = false)
+    private Long electionId;
+
     @Column(nullable = false)
     private Boolean blankVote;
 

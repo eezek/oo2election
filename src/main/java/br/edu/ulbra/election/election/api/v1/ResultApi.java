@@ -5,6 +5,7 @@ import br.edu.ulbra.election.election.output.v1.GenericOutput;
 import br.edu.ulbra.election.election.output.v1.ResultOutput;
 import br.edu.ulbra.election.election.service.ResultService;
 import br.edu.ulbra.election.election.service.VoteService;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,11 +21,13 @@ public class ResultApi {
     private ResultService resultService;
 
     @GetMapping("/election/{electionId}")
+    @ApiOperation(value = "Get Result by Election")
     public ResultOutput getResultByElection(@PathVariable Long electionId) {
         return new ResultOutput();
     }
 
     @GetMapping("/candidate/{candidateId}")
+    @ApiOperation(value = "Get Result by Candidate")
     public ElectionCandidateResultOutput getResultByCandidate(@PathVariable Long candidateId) {
         return resultService.getResultByCandidate(candidateId);
     }

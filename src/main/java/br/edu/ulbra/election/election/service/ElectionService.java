@@ -98,7 +98,7 @@ public class ElectionService {
             }
         } catch (FeignException e) {
             if (e.status() == 500) {
-                throw new EntityNotFoundException("Invalid Election");
+                throw new EntityNotFoundException("Cannot verify election candidates");
             }
         }
 

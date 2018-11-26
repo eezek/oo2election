@@ -49,9 +49,13 @@ public class VoteService {
             vote.setNullVote(true);
         }
 
-        voteRepository.save(vote);
+        if (voteRepository.findByElectionIdAndVoterId(vote.getElectionId(), vote.getVoterId()) != null){
+            voteRepository.save(vote);
+            return new GenericOutput("You have voted");
+        }else {
+            return new GenericOutput("You have already voted");
+        }
 
-        return new GenericOutput("You have voted");
     }
 
     public GenericOutput createMultipleVote(List<VoteInput> votes) {

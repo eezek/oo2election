@@ -1,7 +1,6 @@
 package br.edu.ulbra.election.election.api.v1;
 
 import br.edu.ulbra.election.election.input.v1.VoteInput;
-import br.edu.ulbra.election.election.model.Vote;
 import br.edu.ulbra.election.election.output.v1.GenericOutput;
 import br.edu.ulbra.election.election.repository.VoteProjection;
 import br.edu.ulbra.election.election.service.VoteService;
@@ -32,13 +31,13 @@ public class VoteApi {
 
     @GetMapping("/candidate/{candidateId}/election/{electionId}")
     @ApiOperation(value = "Get Vote by Election and Candidate")
-    public List<VoteProjection> byElectionAndCandidate(@PathVariable Long candidateId, @PathVariable Long electionId){
+    public List<VoteProjection> byElectionAndCandidate(@PathVariable Long candidateId, @PathVariable Long electionId) {
         return voteService.byElectionAndCandidate(candidateId, electionId);
     }
 
     @GetMapping("/candidate/{candidateId}")
     @ApiOperation(value = "get Vote by Candidate")
-    public List<VoteProjection> byCandidate(@PathVariable Long candidateId){
+    public List<VoteProjection> byCandidate(@PathVariable Long candidateId) {
         return voteService.byCandidate(candidateId);
     }
 }

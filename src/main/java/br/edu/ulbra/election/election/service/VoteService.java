@@ -35,21 +35,23 @@ public class VoteService {
         vote.setElection(validateInput(voteInput));
         vote.setVoterId(voteInput.getVoterId());
 
-        if (voteInput.getCandidateNumber() == null) {
-            vote.setBlankVote(true);
-        } else {
+        if (voteInput.getCandidateNumber() != null) {
             vote.setBlankVote(false);
+        } else {
+            vote.setBlankVote(true);
         }
 
         CandidateOutput candidateOutput = isCandidate(voteInput.getCandidateNumber());
-        if (candidateOutput != null){
+        if (Optional.ofNullable(candidateOutput.getId()).isPresent()){
             vote.setCandidateId(candidateOutput.getId());
             vote.setNullVote(false);
-        }else {
+        }else if (voteInput.getCandidateNumber() != null){
             vote.setNullVote(true);
+        }else {
+            vote.setNullVote(false);
         }
 
-        if (voteRepository.findByElectionIdAndVoterId(vote.getElectionId(), vote.getVoterId()) != null){
+        if (!voteRepository.findByElectionIdAndVoterId(vote.getElection().getId(), vote.getVoterId()).isPresent()){
             voteRepository.save(vote);
             return new GenericOutput("You have voted");
         }else {

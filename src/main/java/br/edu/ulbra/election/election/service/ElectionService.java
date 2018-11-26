@@ -85,10 +85,11 @@ public class ElectionService {
         return electionRepository.findById(electionId).orElseThrow(() -> new EntityNotFoundException(MESSAGE_NOT_FOUND));
     }
 
-    private void verifyElection(Long electionId){
+    private void verifyElection(Long electionId) {
         Optional.ofNullable(voteRepository.findByElectionId(electionId)).ifPresent(x -> {
-            if (!x.isEmpty()){
-            throw new EntityNotFoundException("Election cannot be touched");}
+            if (!x.isEmpty()) {
+                throw new EntityNotFoundException("Election cannot be touched");
+            }
         });
 
         try {

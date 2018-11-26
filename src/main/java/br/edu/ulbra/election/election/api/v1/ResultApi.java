@@ -23,7 +23,7 @@ public class ResultApi {
     @GetMapping("/election/{electionId}")
     @ApiOperation(value = "Get Result by Election")
     public ResultOutput getResultByElection(@PathVariable Long electionId) {
-        return new ResultOutput();
+        return resultService.getElectionResults(electionId);
     }
 
     @GetMapping("/candidate/{candidateId}")

@@ -6,6 +6,7 @@ import br.edu.ulbra.election.election.model.Election;
 import br.edu.ulbra.election.election.model.Vote;
 import br.edu.ulbra.election.election.output.v1.CandidateOutput;
 import br.edu.ulbra.election.election.output.v1.GenericOutput;
+import br.edu.ulbra.election.election.output.v1.VoterOutput;
 import br.edu.ulbra.election.election.repository.ElectionRepository;
 import br.edu.ulbra.election.election.repository.VoteProjection;
 import br.edu.ulbra.election.election.repository.VoteRepository;
@@ -29,8 +30,9 @@ public class VoteService {
 
     private VoterService voterService;
 
-    public GenericOutput createVote(VoteInput voteInput) {
 
+    public GenericOutput createVote(VoteInput voteInput, String token) {
+        authenticate(token, voteInput.getVoterId());
         Vote vote = new Vote();
         vote.setElection(validateInput(voteInput));
         vote.setVoterId(voteInput.getVoterId());
@@ -60,8 +62,8 @@ public class VoteService {
 
     }
 
-    public GenericOutput createMultipleVote(List<VoteInput> votes) {
-        votes.forEach(voteInput -> createVote(voteInput));
+    public GenericOutput createMultipleVote(List<VoteInput> votes, String token) {
+        votes.forEach(voteInput -> createVote(voteInput, token));
         return new GenericOutput("You have voted");
     }
 
@@ -114,6 +116,21 @@ public class VoteService {
             if (e.status() == 500) {
                 throw new EntityNotFoundException("Invalid Voter");
             }
+        }
+    }
+
+    private void authenticate(String token, Long voterId)
+    {
+        try {
+            VoterOutput voterOutput = voterService.checkToken(token);
+
+            if(!voterOutput.getId().equals(voterId))
+            {
+                throw new GenericOutputException("Unauthorized");
+            }
+        }catch (FeignException e){
+            System.out.println(e.getMessage());
+            throw new GenericOutputException("Unauthorized");
         }
     }
 

@@ -19,14 +19,14 @@ public class VoteApi {
 
     @PutMapping("/")
     @ApiOperation(value = "Vote")
-    public GenericOutput electionVote(@RequestBody VoteInput voteInput) {
-        return voteService.createVote(voteInput);
+    public GenericOutput electionVote(@RequestHeader(value = "x-token") String token, @RequestBody VoteInput voteInput) {
+        return voteService.createVote(voteInput, token);
     }
 
     @PutMapping("/multiple")
     @ApiOperation(value = "Multiple Vote")
-    public GenericOutput multipleElectionVote(@RequestBody List<VoteInput> voteInputList) {
-        return voteService.createMultipleVote(voteInputList);
+    public GenericOutput multipleElectionVote(@RequestHeader(value = "x-token") String token, @RequestBody List<VoteInput> voteInputList) {
+        return voteService.createMultipleVote(voteInputList, token);
     }
 
     @GetMapping("/candidate/{candidateId}/election/{electionId}")
